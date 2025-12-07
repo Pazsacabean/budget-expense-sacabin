@@ -1,34 +1,34 @@
-// src/lib/gemini.js
+// In src/lib/gemini.js - UPDATE the API key handling:
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-
-const GEMINI_API_KEY = 'AIzaSyBk2nXBWsnWZpE5XTBTuqznmGwPxeR5fjs';
-
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-
-
-const MODEL_NAMES = [
-  'gemini-2.0-flash',      
-  'gemini-1.5-pro',        
-  'gemini-pro',            
-];
-
+if (!GEMINI_API_KEY || GEMINI_API_KEY.includes('AIzaSyBk2')) {
+  console.warn('⚠️ Using a potentially restricted API key. Replace with your own from Google AI Studio.');
+}
 
 async function getAvailableModel() {
-  for (const modelName of MODEL_NAMES) {
+  console.log('🔍 Testing Gemini models...');
+  
+  const testModels = [
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+    'gemini-1.0-pro'
+  ];
+  
+  for (const modelName of testModels) {
     try {
+      console.log(`Testing model: ${modelName}`);
       const model = genAI.getGenerativeModel({ model: modelName });
-
-      await model.generateContent('test');
-      console.log(`✅ Using model: ${modelName}`);
+      
+      // Quick test with simple prompt
+      const testResult = await model.generateContent("Test");
+      console.log(`✅ Model ${modelName} is available`);
       return model;
     } catch (error) {
-      console.log(`❌ Model ${modelName} not available:`, error.message);
+      console.warn(`❌ Model ${modelName} failed:`, error.message);
+      continue;
     }
   }
-  throw new Error('No available Gemini models found');
+  
+  throw new Error('❌ No working Gemini models found. Check API key and billing.');
 }
 
 
