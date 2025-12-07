@@ -1,60 +1,68 @@
+// Create: src/components/layout/Navbar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../lib/context/AuthContext'; // ✅ Fixed path
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../lib/context/AuthContext';
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
-  const userRole = user?.user_metadata?.role || 'guest';
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">$</span>
               </div>
-              <span className="text-xl font-bold text-gray-800">BudgetAI</span>
+              <span className="font-bold text-gray-800 text-xl">BudgetAI</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <span className="text-gray-600 text-sm">
-                  Welcome, <span className="font-semibold">{user.email}</span>
-                </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  userRole === 'admin' 
-                    ? 'bg-red-100 text-red-800' 
-                    : 'bg-green-100 text-green-800'
-                }`}>
-                  {userRole}
-                </span>
+                <Link to="/" className="text-gray-700 hover:text-blue-600 px-3 py-2">
+                  Dashboard
+                </Link>
                 
-                {userRole === 'admin' && (
-                  <Link to="/admin" className="text-gray-700 hover:text-blue-600">
+                {user.user_metadata?.role === 'admin' && (
+                  <Link to="/admin" className="text-gray-700 hover:text-blue-600 px-3 py-2">
                     Admin
                   </Link>
                 )}
                 
-                <button
-                  onClick={signOut}
-                  className="px-4 py-2 text-sm bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
-                >
-                  Sign Out
-                </button>
+                <div className="flex items-center space-x-2">
+                  <div className="text-sm text-gray-600">
+                    {user.email}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200"
+                  >
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <Link to="/guest" className="text-gray-700 hover:text-blue-600">
-                  Demo
+                <Link to="/guest" className="text-gray-700 hover:text-blue-600 px-3 py-2">
+                  Guest Demo
                 </Link>
-                <Link to="/login" className="px-4 py-2 text-sm bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
+                <Link to="/login" className="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50">
                   Login
                 </Link>
-                <Link to="/register" className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                <Link to="/register" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                   Sign Up
                 </Link>
               </>
