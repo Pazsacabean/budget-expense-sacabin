@@ -70,24 +70,24 @@ export default function BudgetDashboard() {
       const suggestions = await getBudgetSuggestions(amount, periodType);
       setAiSuggestions(suggestions);
 
-      // ✅ Match Supabase schema exactly
-      // Replace the entire .insert() block with:
+      // In BudgetDashboard.jsx - UPDATE the insert block:
 const { data, error } = await supabase
   .from('budgets')
   .insert([
     {
       user_id: user.id,
-      amount: amount, // ✅ not total_amount
-      period: periodType, // ✅ not period_type
-      categories: {
+      amount: parseFloat(budgetInput),  // ✅ Store as float
+      period_type: periodType,          // ✅ Changed from 'period'
+      categories: JSON.stringify({      // ✅ Store as JSON string
         food: suggestions?.food || amount * 0.4,
         transportation: suggestions?.transportation || amount * 0.3,
-        others: suggestions?.other || amount * 0.3,
-      },
-      start_date: new Date().toISOString().split('T')[0],
-      end_date: periodType === 'weekly'
-        ? new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
-        : new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+        other: suggestions?.other || amount * 0.3
+      }),
+      start_date: new Date().toISOString(),
+      end_date: periodType === 'weekly' 
+        ? new Date(Date.now() + 7 * 86400000).toISOString()
+        : new Date(Date.now() + 30 * 86400000).toISOString(),
+      created_at: new Date().toISOString()
     }
   ])
   .select()
