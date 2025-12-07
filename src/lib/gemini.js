@@ -3,7 +3,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 
-const GEMINI_API_KEY = 'AIzaSyDTIdLvi6LiyR-zN8iEf57l3_U6vHUkxYs';
+const GEMINI_API_KEY = 'AIzaSyBk2nXBWsnWZpE5XTBTuqznmGwPxeR5fjs';
 
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
